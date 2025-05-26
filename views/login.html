@@ -3,54 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión - Sistema de Citas Médicas</title>
+  <title>Iniciar Sesión - Salud Integral</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/3b77b019a4.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <header class="header">
     <div class="container">
-      <div class="logo">HospitalApp</div>
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <div class="logo-text">
+          Salud <span>Integral</span>
+        </div>
+      </div>
+      
       <nav class="nav">
         <ul>
           <li><a href="/">Inicio</a></li>
-          <li><a href="/login">Iniciar Sesión</a></li>
+          <li><a href="/login" class="active">Iniciar Sesión</a></li>
           <li><a href="/register">Registrarse</a></li>
         </ul>
       </nav>
+      
+      <div class="contact-info">
+        <i class="fas fa-phone-alt"></i>
+        <span class="contact-number">+1111111111111</span>
+      </div>
     </div>
   </header>
 
-  <main class="main">
-    <div class="auth-container">
-      <div class="card">
-        <form class="auth-form" id="loginForm">
-          <h2>Iniciar Sesión</h2>
-          <div id="loginAlert"></div>
-          
-          <div class="form-group">
-            <label for="username">Nombre de Usuario</label>
-            <input type="text" id="username" class="form-control" placeholder="Tu nombre de usuario" required>
+  <section class="auth-section">
+    <div class="container">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-header">
+            <h2>Iniciar Sesión</h2>
+            <p>Accede a tu cuenta para gestionar tus citas médicas</p>
           </div>
           
-          <div class="form-group">
-            <label for="password">Contraseña</label>
-            <input type="password" id="password" class="form-control" placeholder="Tu contraseña" required>
-          </div>
-          
-          <button type="submit" class="btn btn-block">Iniciar Sesión</button>
-          
-          <div class="auth-links">
-            <a href="/register">¿No tienes cuenta? Regístrate</a>
-            <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
-          </div>
-        </form>
+          <form class="auth-form" id="loginForm">
+            <div id="loginAlert" class="alert" style="display: none;"></div>
+            
+            <div class="form-group">
+              <label for="username">Nombre de Usuario</label>
+              <div class="input-icon">
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" class="form-control" placeholder="Tu nombre de usuario" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="password">Contraseña</label>
+              <div class="input-icon">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" class="form-control" placeholder="Tu contraseña" required>
+              </div>
+            </div>
+            
+            <button type="submit" class="btn btn-block">Iniciar Sesión</button>
+            
+            <div class="auth-links">
+              <a href="/register">¿No tienes cuenta? Regístrate</a>
+              <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </main>
+  </section>
 
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2025 Sistema de Agendamiento de Citas. Todos los derechos reservados.</p>
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>Salud Integral</h3>
+          <p>Tu bienestar es nuestra prioridad. Ofrecemos servicios de salud de alta calidad con profesionales expertos.</p>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Enlaces rápidos</h3>
+          <ul>
+            <li><a href="/quienes-somos">Quiénes somos</a></li>
+            <li><a href="/servicios">Servicios</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Contacto</h3>
+          <p><i class="fas fa-map-marker-alt"></i> Calle Principal #123, Ciudad</p>
+          <p><i class="fas fa-phone-alt"></i> +1111111111111</p>
+          <p><i class="fas fa-envelope"></i> contacto@saludintegral.com</p>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Salud Integral - Sistema de Agendamiento de Citas. Todos los derechos reservados.</p>
+      </div>
     </div>
   </footer>
 
@@ -77,12 +129,13 @@
           // Login exitoso
           alertElement.className = 'alert alert-success';
           alertElement.textContent = 'Inicio de sesión exitoso. Redirigiendo...';
+          alertElement.style.display = 'block';
           
           // Guardar el token en localStorage
           localStorage.setItem('token', data.token);
           localStorage.setItem('userData', JSON.stringify(data.user));
           
-          // Redireccionar al inicio (index) en lugar de dashboards específicos
+          // Redireccionar según el rol del usuario
           setTimeout(() => {
             window.location.href = '/';
           }, 1000);
@@ -90,13 +143,96 @@
           // Error en login
           alertElement.className = 'alert alert-danger';
           alertElement.textContent = data.message || 'Error al iniciar sesión';
+          alertElement.style.display = 'block';
         }
       } catch (error) {
         alertElement.className = 'alert alert-danger';
         alertElement.textContent = 'Error de conexión. Intente nuevamente.';
+        alertElement.style.display = 'block';
         console.error('Error:', error);
       }
     });
   </script>
+  
+  <style>
+    .auth-section {
+      padding: 60px 0;
+      min-height: calc(100vh - 80px - 320px);
+      display: flex;
+      align-items: center;
+    }
+    
+    .auth-container {
+      max-width: 450px;
+      margin: 0 auto;
+    }
+    
+    .auth-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+    }
+    
+    .auth-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .auth-header h2 {
+      color: var(--accent-color);
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    .auth-header p {
+      color: var(--gray-dark);
+    }
+    
+    .input-icon {
+      position: relative;
+    }
+    
+    .input-icon i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-dark);
+    }
+    
+    .input-icon input {
+      padding-left: 40px;
+    }
+    
+    .auth-links {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+    
+    .auth-links a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    
+    .auth-links a:hover {
+      text-decoration: underline;
+    }
+    
+    footer a {
+      color: var(--secondary-color);
+      text-decoration: none;
+    }
+    
+    footer ul {
+      list-style: none;
+    }
+    
+    footer ul li {
+      margin-bottom: 8px;
+    }
+  </style>
 </body>
 </html>

@@ -3,13 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agendar Cita - Sistema de Citas Médicas</title>
+  <title>Agendar Cita - Salud Integral</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/3b77b019a4.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <header class="header">
     <div class="container">
-      <div class="logo">HospitalApp</div>
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <div class="logo-text">
+          Salud <span>Integral</span>
+        </div>
+      </div>
+      
       <nav class="nav">
         <ul>
           <li><a href="/">Inicio</a></li>
@@ -19,83 +29,115 @@
           <li><a href="#" id="logoutButton">Cerrar Sesión</a></li>
         </ul>
       </nav>
+      
+      <div class="contact-info">
+        <i class="fas fa-phone-alt"></i>
+        <span class="contact-number">+1111111111111</span>
+      </div>
     </div>
   </header>
 
-  <main class="main">
+  <section class="hero small-hero">
     <div class="container">
-      <div class="page-title">
-        <h1>Agendar Nueva Cita</h1>
-        <p>Complete el formulario para reservar su cita médica.</p>
-      </div>
-      
-      <div class="appointment-container">
-        <div class="card">
-          <form id="appointmentForm">
-            <div id="formAlert" class="alert" style="display: none;"></div>
-            
-            <div class="form-section">
-              <h3>1. Seleccionar médico</h3>
-              <div class="form-group">
-                <label for="doctorType">Tipo de médico</label>
-                <select id="doctorType" class="form-control" required>
-                  <option value="">Seleccione tipo...</option>
-                  <option value="General">Médico General</option>
-                  <option value="Especialidad">Especialista</option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label for="doctorSelect">Médico</label>
-                <select id="doctorSelect" class="form-control" required disabled>
-                  <option value="">Seleccione primero el tipo de médico</option>
-                </select>
-              </div>
-            </div>
-            
-            <div class="form-section">
-              <h3>2. Seleccionar fecha y hora</h3>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="appointmentDate">Fecha</label>
-                  <input type="date" id="appointmentDate" class="form-control" required>
-                </div>
-                
-                <div class="form-group">
-                  <label for="appointmentTime">Hora</label>
-                  <select id="appointmentTime" class="form-control" required disabled>
-                    <option value="">Seleccione primero una fecha</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            
-            <div class="form-section">
-              <h3>3. Detalles de la cita</h3>
-              <div class="form-group">
-                <label for="appointmentReason">Motivo de la consulta</label>
-                <textarea id="appointmentReason" class="form-control" rows="3" required></textarea>
-              </div>
-              
-              <div class="form-group">
-                <label for="appointmentNotes">Notas adicionales (opcional)</label>
-                <textarea id="appointmentNotes" class="form-control" rows="2"></textarea>
-              </div>
-            </div>
-            
-            <div class="form-actions">
-              <button type="button" class="btn btn-secondary" onclick="window.location.href='/'">Cancelar</button>
-              <button type="submit" class="btn btn-success">Confirmar Cita</button>
-            </div>
-          </form>
-        </div>
+      <div class="hero-content text-center">
+        <h1 class="hero-title">Agendar Nueva Cita</h1>
+        <p class="hero-text">Complete el formulario para reservar su cita médica con uno de nuestros especialistas.</p>
       </div>
     </div>
-  </main>
+  </section>
+
+  <section class="appointment-section">
+    <div class="container">
+      <div class="card appointment-card">
+        <form id="appointmentForm">
+          <div id="formAlert" class="alert" style="display: none;"></div>
+          
+          <div class="form-section">
+            <h3><i class="fas fa-user-md"></i> 1. Seleccionar médico</h3>
+            <div class="form-group">
+              <label for="doctorType">Tipo de médico</label>
+              <select id="doctorType" class="form-control" required>
+                <option value="">Seleccione tipo...</option>
+                <option value="General">Médico General</option>
+                <option value="Especialidad">Especialista</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="doctorSelect">Médico</label>
+              <select id="doctorSelect" class="form-control" required disabled>
+                <option value="">Seleccione primero el tipo de médico</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h3><i class="fas fa-calendar-alt"></i> 2. Seleccionar fecha y hora</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="appointmentDate">Fecha</label>
+                <input type="date" id="appointmentDate" class="form-control" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="appointmentTime">Hora</label>
+                <select id="appointmentTime" class="form-control" required disabled>
+                  <option value="">Seleccione primero una fecha</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h3><i class="fas fa-clipboard-list"></i> 3. Detalles de la cita</h3>
+            <div class="form-group">
+              <label for="appointmentReason">Motivo de la consulta</label>
+              <textarea id="appointmentReason" class="form-control" rows="3" required></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="appointmentNotes">Notas adicionales (opcional)</label>
+              <textarea id="appointmentNotes" class="form-control" rows="2"></textarea>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/'">Cancelar</button>
+            <button type="submit" class="btn">Confirmar Cita</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
 
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2025 Sistema de Agendamiento de Citas. Todos los derechos reservados.</p>
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>Salud Integral</h3>
+          <p>Tu bienestar es nuestra prioridad. Ofrecemos servicios de salud de alta calidad con profesionales expertos.</p>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Enlaces rápidos</h3>
+          <ul>
+            <li><a href="/quienes-somos">Quiénes somos</a></li>
+            <li><a href="/servicios">Servicios</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Contacto</h3>
+          <p><i class="fas fa-map-marker-alt"></i> Calle Principal #123, Ciudad</p>
+          <p><i class="fas fa-phone-alt"></i> +1111111111111</p>
+          <p><i class="fas fa-envelope"></i> contacto@saludintegral.com</p>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Salud Integral - Sistema de Agendamiento de Citas. Todos los derechos reservados.</p>
+      </div>
     </div>
   </footer>
 
@@ -293,29 +335,40 @@
   </script>
   
   <style>
-    .page-title {
-      margin-bottom: 30px;
+    .text-center {
+      text-align: center;
     }
     
-    .appointment-container {
+    .small-hero {
+      padding: 40px 0;
+    }
+    
+    .appointment-section {
+      padding: 40px 0 80px;
+    }
+    
+    .appointment-card {
       max-width: 800px;
       margin: 0 auto;
     }
     
     .form-section {
       margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #eee;
+      padding-bottom: 25px;
+      border-bottom: 1px solid var(--gray-medium);
     }
     
     .form-section h3 {
-      margin-bottom: 15px;
-      color: #0066cc;
+      margin-bottom: 20px;
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     
     .form-row {
       display: flex;
-      gap: 15px;
+      gap: 20px;
     }
     
     .form-row .form-group {
@@ -326,11 +379,6 @@
       display: flex;
       justify-content: space-between;
       margin-top: 30px;
-    }
-    
-    .btn-secondary {
-      background-color: #6c757d;
-      color: white;
     }
     
     .alert {
@@ -351,9 +399,17 @@
       border: 1px solid #f5c6cb;
     }
     
-    .nav .active {
-      font-weight: bold;
-      color: #0066cc;
+    footer a {
+      color: var(--secondary-color);
+      text-decoration: none;
+    }
+    
+    footer ul {
+      list-style: none;
+    }
+    
+    footer ul li {
+      margin-bottom: 8px;
     }
   </style>
 </body>

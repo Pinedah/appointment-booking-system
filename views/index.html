@@ -3,160 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Citas Médicas</title>
+  <title>Salud Integral - Sistema de Citas Médicas</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/3b77b019a4.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <header class="header">
     <div class="container">
-      <div class="logo">HospitalApp</div>
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <div class="logo-text">
+          Salud <span>Integral</span>
+        </div>
+      </div>
+      
       <nav class="nav">
         <ul>
-          <li><a href="/">Inicio</a></li>
-          <li id="loginLink"><a href="/login">Iniciar Sesión</a></li>
-          <li id="registerLink"><a href="/register">Registrarse</a></li>
-          <li id="appointmentLink" style="display: none;"><a href="/agendar-cita">Agendar Cita</a></li>
-          <li id="profileLink" style="display: none;"><a href="/perfil">Mi Perfil</a></li>
-          <li id="logoutLink" style="display: none;"><a href="#" id="logoutButton">Cerrar Sesión</a></li>
+          <li><a href="/" class="active">Inicio</a></li>
+          <li><a href="/agendar-cita">Agendar Cita</a></li>
+          <li><a href="/login">Iniciar Sesión</a></li>
+          <li><a href="/register">Registrarse</a></li>
         </ul>
       </nav>
+      
+      <div class="contact-info">
+        <i class="fas fa-phone-alt"></i>
+        <span class="contact-number">+1111111111111</span>
+      </div>
     </div>
   </header>
 
-  <main class="main">
+  <section class="hero">
     <div class="container">
-      <!-- Panel de bienvenida personalizado -->
-      <section class="user-welcome" id="userWelcome" style="display: none;">
-        <div class="card">
-          <div id="userInfo">
-            <!-- La información del usuario se cargará aquí -->
-          </div>
-          <div class="cta-buttons">
-            <a href="/agendar-cita" class="btn btn-success">Agendar una cita</a>
-            <a href="/mis-citas" class="btn">Mis citas</a>
-          </div>
-        </div>
-      </section>
+      <div class="hero-content">
+        <h1 class="hero-title">Encuentra tu especialista y pide cita</h1>
+        <p class="hero-text">
+          Nuestros profesionales trabajan en estrecha colaboración con usted y
+          su familia para crear un plan de atención personalizado que se adapte a
+          sus necesidades y preferencias individuales.
+        </p>
+        <a href="/agendar-cita" class="btn">Agenda tu cita</a>
+      </div>
       
-      <!-- Panel de bienvenida para visitantes -->
-      <section class="hero" id="guestWelcome">
-        <div class="card">
-          <h1>Bienvenido al Sistema de Agendamiento de Citas</h1>
-          <p>Gestiona tus citas médicas de forma eficiente y sencilla.</p>
-          <div class="cta-buttons">
-            <a href="/register" class="btn">Registrarse</a>
-            <a href="/login" class="btn btn-success">Iniciar Sesión</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="features">
-        <h2>Nuestros Servicios</h2>
-        <div class="feature-cards">
-          <div class="card">
-            <h3>Agenda tu cita</h3>
-            <p>Selecciona fecha, hora y especialista según tu conveniencia.</p>
-          </div>
-          <div class="card">
-            <h3>Gestiona tus citas</h3>
-            <p>Visualiza, modifica o cancela tus citas programadas.</p>
-          </div>
-          <div class="card">
-            <h3>Historial médico</h3>
-            <p>Accede a tu historial de citas y tratamientos.</p>
-          </div>
-        </div>
-      </section>
+      <div class="hero-image">
+        <img src="/img/doctors.svg" alt="Médicos especialistas">
+      </div>
     </div>
-  </main>
+  </section>
+
+  <section class="features">
+    <div class="container features-container">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="feature-content">
+          <h3>Servicios 24 hrs</h3>
+          <p>Atención médica disponible todo el día para emergencias</p>
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-user-md"></i>
+        </div>
+        <div class="feature-content">
+          <h3>Médicos con experiencia</h3>
+          <p>Profesionales altamente calificados y con amplia trayectoria</p>
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-award"></i>
+        </div>
+        <div class="feature-content">
+          <h3>Atención de alta calidad</h3>
+          <p>Cuidado médico personalizado enfocado en tu bienestar</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2025 Sistema de Agendamiento de Citas. Todos los derechos reservados.</p>
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>Salud Integral</h3>
+          <p>Tu bienestar es nuestra prioridad. Ofrecemos servicios de salud de alta calidad con profesionales expertos en diferentes especialidades.</p>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Enlaces rápidos</h3>
+          <ul>
+            <li><a href="/quienes-somos">Quiénes somos</a></li>
+            <li><a href="/servicios">Servicios</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Contacto</h3>
+          <p><i class="fas fa-map-marker-alt"></i> Calle Principal #123, Ciudad</p>
+          <p><i class="fas fa-phone-alt"></i> +1111111111111</p>
+          <p><i class="fas fa-envelope"></i> contacto@saludintegral.com</p>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Salud Integral - Sistema de Agendamiento de Citas. Todos los derechos reservados.</p>
+      </div>
     </div>
   </footer>
 
   <script>
+    // Verificar si el usuario está logueado
     document.addEventListener('DOMContentLoaded', function() {
-      // Verificar si el usuario está logueado
       const token = localStorage.getItem('token');
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       
-      if (token && userData) {
-        // Mostrar sección de usuario logueado
-        document.getElementById('userWelcome').style.display = 'block';
-        document.getElementById('guestWelcome').style.display = 'none';
-        
+      if (token) {
         // Actualizar enlaces de navegación
-        document.getElementById('loginLink').style.display = 'none';
-        document.getElementById('registerLink').style.display = 'none';
-        document.getElementById('appointmentLink').style.display = 'inline-block';
-        document.getElementById('profileLink').style.display = 'inline-block';
-        document.getElementById('logoutLink').style.display = 'inline-block';
+        document.querySelector('.nav ul').innerHTML = `
+          <li><a href="/" class="active">Inicio</a></li>
+          <li><a href="/agendar-cita">Agendar Cita</a></li>
+          <li><a href="/mis-citas">Mis Citas</a></li>
+          <li><a href="/perfil">Mi Perfil</a></li>
+          <li><a href="#" id="logoutButton">Cerrar Sesión</a></li>
+        `;
         
-        // Crear contenido personalizado según el rol
-        let welcomeHTML = '';
-        if (userData.role === 'doctor') {
-          welcomeHTML = `
-            <h2>Bienvenido, Dr(a). ${userData.userData?.nombre || 'Estimado médico'}</h2>
-            <p>Panel de médico - Gestiona tus consultas y pacientes.</p>
-            <div class="user-stats">
-              <div class="stat">
-                <strong>Tipo:</strong> ${userData.userData?.tipo_medico || 'No especificado'}
-              </div>
-            </div>
-          `;
-        } else {
-          welcomeHTML = `
-            <h2>Bienvenido, ${userData.userData?.nombre || 'Estimado paciente'}</h2>
-            <p>Accede a todos los servicios de nuestro sistema.</p>
-            <div class="user-stats">
-              <div class="stat">
-                <strong>Teléfono:</strong> ${userData.userData?.num_tel || 'No registrado'}
-              </div>
-              <div class="stat">
-                <strong>Tipo:</strong> ${userData.userData?.tipo_paciente || 'No especificado'}
-              </div>
-            </div>
-          `;
-        }
-        
-        document.getElementById('userInfo').innerHTML = welcomeHTML;
-      } else {
-        // Usuario no logueado, mostrar sección de invitado
-        document.getElementById('userWelcome').style.display = 'none';
-        document.getElementById('guestWelcome').style.display = 'block';
+        // Añadir evento de cierre de sesión
+        document.getElementById('logoutButton').addEventListener('click', function(e) {
+          e.preventDefault();
+          localStorage.removeItem('token');
+          localStorage.removeItem('userData');
+          window.location.href = '/';
+        });
       }
-      
-      // Configurar botón de logout
-      document.getElementById('logoutButton').addEventListener('click', function(e) {
-        e.preventDefault();
-        localStorage.removeItem('token');
-        localStorage.removeItem('userData');
-        window.location.href = '/';
-      });
     });
   </script>
-
-  <style>
-    .user-welcome {
-      margin-bottom: 30px;
-    }
-    
-    .user-stats {
-      display: flex;
-      margin-top: 15px;
-      flex-wrap: wrap;
-    }
-    
-    .stat {
-      background-color: #f8f9fa;
-      padding: 10px 15px;
-      border-radius: 4px;
-      margin-right: 10px;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-  </style>
 </body>
 </html>
