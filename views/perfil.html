@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil - Sistema de Citas Médicas</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">HospitalApp</div>
+      <nav class="nav">
+        <ul>
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/agendar-cita">Agendar Cita</a></li>
+          <li><a href="/mis-citas">Mis Citas</a></li>
+          <li><a href="/perfil" class="active">Mi Perfil</a></li>
+          <li><a href="#" id="logoutButton">Cerrar Sesión</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <div class="page-title">
+        <h1>Mi Perfil</h1>
+        <p>Información personal y configuración de cuenta</p>
+      </div>
+      
+      <div class="profile-container">
+        <div class="row">
+          <div class="col-left">
+            <div class="card">
+              <div class="profile-header">
+                <div class="profile-avatar">
+                  <div class="avatar-placeholder" id="userInitials">--</div>
+                </div>
+                <h2 id="userName">Cargando...</h2>
+                <p id="userRole" class="user-role">Usuario</p>
+              </div>
+              
+              <div class="profile-details" id="profileDetails">
+                <!-- Los detalles se cargarán dinámicamente -->
+                <div class="loading-spinner">Cargando información...</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-right">
+            <div class="card">
+              <h3>Actualizar información</h3>
+              <form id="updateProfileForm">
+                <div id="updateAlert" class="alert" style="display: none;"></div>
+                
+                <!-- Los campos variarán según el tipo de usuario -->
+                <div id="profileFormFields">
+                  <!-- Se cargarán dinámicamente -->
+                </div>
+                
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                </div>
+              </form>
+            </div>
+            
+            <div class="card mt-20">
+              <h3>Cambiar contraseña</h3>
+              <form id="changePasswordForm">
+                <div id="passwordAlert" class="alert" style="display: none;"></div>
+                
+                <div class="form-group">
+                  <label for="currentPassword">Contraseña actual</label>
+                  <input type="password" id="currentPassword" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="newPassword">Nueva contraseña</label>
+                  <input type="password" id="newPassword" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="confirmNewPassword">Confirmar nueva contraseña</label>
+                  <input type="password" id="confirmNewPassword" class="form-control" required>
+                </div>
+                
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-success">Cambiar Contraseña</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Sistema de Agendamiento de Citas. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Verificar autenticación
+      const token = localStorage.getItem('token');
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      
+      if (!token || !userData) {
+        window.location.href = '/login?redirect=/perfil';
+        return;
+      }
+      
+      // Determinar si el usuario es médico basado en múltiples propiedades posibles
+      const isDoctor = userData.role === 'doctor' || 
+                       userData.userType === 'medico' || 
+                       userData.userData?.id_medico || 
+                       (userData.userData && userData.userData.tipo_medico);
+      
+      console.log('Datos de usuario en localStorage:', userData);
+      console.log('¿Es médico?', isDoctor);
+      
+      // Mostrar información de diagnóstico para depuración
+      if (userData.role) console.log('Role:', userData.role);
+      if (userData.userType) console.log('UserType:', userData.userType);
+      if (userData.userData?.id_medico) console.log('ID médico:', userData.userData.id_medico);
+      if (userData.userData?.id_paciente) console.log('ID paciente:', userData.userData.id_paciente);
+      
+      // Función para extraer el tipo de usuario del token JWT
+      function getRoleFromToken(token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          console.log('Token payload:', payload);
+          return payload.role || payload.userType;
+        } catch (e) {
+          console.error('Error al decodificar token:', e);
+          return null;
+        }
+      }
+      
+      // Verificar rol desde token
+      const tokenRole = getRoleFromToken(token);
+      if (tokenRole) {
+        console.log('Role extraído del token:', tokenRole);
+      }
+      
+      // Actualizar avatar con iniciales
+      function getInitials(name) {
+        if (!name) return '--';
+        return name.split(' ').map(n => n[0]).join('').toUpperCase();
+      }
+      
+      // Cargar datos del perfil desde la API con información de rol explícita
+      async function fetchProfileData() {
+        try {
+          // Mostrar datos mientras carga desde API
+          if (userData && userData.userData) {
+            renderProfileData(userData.userData);
+          }
+          
+          // Enviar información explícita de rol a la API
+          const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          };
+          
+          // Agregar header específico para indicar si es médico
+          if (isDoctor) {
+            headers['X-User-Role'] = 'doctor';
+          }
+          
+          const response = await fetch('/api/users/profile', {
+            method: 'GET',
+            headers: headers
+          });
+          
+          console.log('Respuesta HTTP:', response.status);
+          
+          if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          console.log('Datos de perfil recibidos:', data);
+          
+          if (!data || !data.userData) {
+            throw new Error('Formato de respuesta incorrecto');
+          }
+          
+          // Detectar tipo de usuario desde los datos recibidos
+          const responseIsDoctor = data.userType === 'doctor' || 
+                                 data.userData.id_medico || 
+                                 data.userData.tipo_medico;
+          
+          console.log('¿Es médico según respuesta API?', responseIsDoctor);
+          
+          // Actualizar datos almacenados localmente con la información correcta del rol
+          const currentUserData = JSON.parse(localStorage.getItem('userData') || '{}');
+          currentUserData.userData = data.userData;
+          
+          // Asegurar que el rol está correctamente establecido
+          if (responseIsDoctor && currentUserData.role !== 'doctor') {
+            currentUserData.role = 'doctor';
+            console.log('Actualizando rol a doctor en localStorage');
+          }
+          
+          localStorage.setItem('userData', JSON.stringify(currentUserData));
+          
+          // Renderizar perfil con datos actualizados y rol correcto
+          renderProfileData(data.userData, responseIsDoctor || isDoctor);
+          
+          return data.userData;
+        } catch (error) {
+          console.error('Error al cargar perfil:', error);
+          
+          // Si hay datos en localStorage, usarlos como fallback
+          if (userData && userData.userData) {
+            console.log('Usando datos de localStorage como fallback');
+            renderProfileData(userData.userData);
+            
+            document.getElementById('profileDetails').insertAdjacentHTML('afterbegin', `
+              <div class="error-message" style="margin-bottom: 20px;">
+                Error al obtener datos actualizados del servidor. Mostrando datos guardados localmente.
+                <button class="btn-link" onclick="location.reload()">Reintentar</button>
+              </div>
+            `);
+            
+            return userData.userData;
+          } else {
+            // Si no hay datos en localStorage, mostrar mensaje de error
+            document.getElementById('profileDetails').innerHTML = `
+              <div class="error-message">
+                No se pudieron cargar los datos del perfil. 
+                <button class="btn-link" onclick="location.reload()">Reintentar</button>
+              </div>
+            `;
+            
+            // Como fallback, podemos mostrar algo básico del token decodificado
+            try {
+              const payload = JSON.parse(atob(token.split('.')[1]));
+              console.log('Datos del token:', payload);
+              
+              // Mostrar datos mínimos a partir del token
+              const minimalData = {
+                role: payload.role || 'desconocido',
+                nombre: payload.nombre || payload.username || 'Usuario'
+              };
+              
+              renderProfileData(minimalData);
+              return minimalData;
+            } catch (e) {
+              console.error('Error al decodificar token:', e);
+              return null;
+            }
+          }
+        }
+      }
+      
+      // Renderizar datos del perfil
+      function renderProfileData(profileData, forceDoctorRole = false) {
+        if (!profileData) {
+          console.error('No hay datos para renderizar');
+          return;
+        }
+        
+        // Determinar si es médico basado en los datos o el forzado del rol
+        const showAsDoctorProfile = forceDoctorRole || isDoctor || 
+                                  profileData.tipo_medico || 
+                                  profileData.id_medico;
+        
+        console.log('Renderizando datos como:', showAsDoctorProfile ? 'médico' : 'paciente');
+        console.log('Datos a renderizar:', profileData);
+        
+        const profileDetails = document.getElementById('profileDetails');
+        const profileFormFields = document.getElementById('profileFormFields');
+        
+        // Actualizar nombre e iniciales
+        document.getElementById('userName').textContent = profileData.nombre || 'Usuario';
+        document.getElementById('userInitials').textContent = getInitials(profileData.nombre || 'U');
+        
+        // Actualizar rol
+        const roleDisplay = showAsDoctorProfile ? 'Médico' : 'Paciente';
+        document.getElementById('userRole').textContent = roleDisplay;
+        
+        // Mostrar detalles según el rol
+        let detailsHTML = '';
+        let formFieldsHTML = '';
+        
+        if (!showAsDoctorProfile) {
+          // Detalles de paciente
+          detailsHTML = `
+            <div class="detail-item">
+              <span class="detail-label">Nombre completo:</span>
+              <span class="detail-value">${profileData.nombre || 'No disponible'}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Teléfono:</span>
+              <span class="detail-value">${profileData.num_tel || 'No disponible'}</span>
+            </div>`;
+            
+          if (profileData.tipo_paciente) {
+            detailsHTML += `
+            <div class="detail-item">
+              <span class="detail-label">Tipo de paciente:</span>
+              <span class="detail-value">${profileData.tipo_paciente || 'No disponible'}</span>
+            </div>`;
+          }
+            
+          if (profileData.tipo_paciente === 'P1' && profileData.nss) {
+            detailsHTML += `
+            <div class="detail-item">
+              <span class="detail-label">NSS:</span>
+              <span class="detail-value">****${profileData.nss.slice(-4) || ''}</span>
+            </div>`;
+          }
+            
+          if (profileData.tipo_paciente === 'P2' && profileData.num_poliza) {
+            detailsHTML += `
+            <div class="detail-item">
+              <span class="detail-label">Número de Póliza:</span>
+              <span class="detail-value">****${profileData.num_poliza.slice(-4) || ''}</span>
+            </div>`;
+          }
+          
+          // Formulario para paciente
+          formFieldsHTML = `
+            <div class="form-group">
+              <label for="updateNombre">Nombre completo</label>
+              <input type="text" id="updateNombre" class="form-control" value="${profileData.nombre || ''}" required>
+            </div>
+            <div class="form-group">
+              <label for="updateTelefono">Teléfono</label>
+              <input type="tel" id="updateTelefono" class="form-control" value="${profileData.num_tel || ''}">
+            </div>
+          `;
+        } else {
+          // Detalles de médico
+          detailsHTML = `
+            <div class="detail-item">
+              <span class="detail-label">Nombre completo:</span>
+              <span class="detail-value">${profileData.nombre || 'No disponible'}</span>
+            </div>`;
+            
+          if (profileData.tipo_medico) {
+            detailsHTML += `
+            <div class="detail-item">
+              <span class="detail-label">Tipo de médico:</span>
+              <span class="detail-value">${profileData.tipo_medico || 'No especificado'}</span>
+            </div>`;
+          }
+            
+          if (profileData.tipo_medico === 'Especialidad' || profileData.especialidad) {
+            detailsHTML += `
+            <div class="detail-item">
+              <span class="detail-label">Especialidad:</span>
+              <span class="detail-value">${profileData.especialidad || 'No especificada'}</span>
+            </div>`;
+          }
+          
+          // ID de médico (para depuración)
+          detailsHTML += `
+            <div class="detail-item">
+              <span class="detail-label">ID:</span>
+              <span class="detail-value">${profileData.id_medico || 'No disponible'}</span>
+            </div>`;
+            
+          detailsHTML += `
+            <div class="detail-item doctor-stats">
+              <span class="stat-number">${profileData.citas_totales || 0}</span>
+              <span class="stat-label">Citas totales</span>
+            </div>
+            <div class="doctor-badge">
+              <span class="badge badge-${profileData.tipo_medico === 'Especialidad' ? 'specialty' : 'general'}">
+                ${profileData.tipo_medico || 'Médico General'}
+              </span>
+            </div>
+          `;
+          
+          // Formulario para médico
+          formFieldsHTML = `
+            <div class="form-group">
+              <label for="updateNombre">Nombre completo</label>
+              <input type="text" id="updateNombre" class="form-control" value="${profileData.nombre || ''}" required>
+            </div>`;
+            
+          if (profileData.tipo_medico === 'Especialidad') {
+            formFieldsHTML += `
+            <div class="form-group">
+              <label for="updateEspecialidad">Especialidad</label>
+              <input type="text" id="updateEspecialidad" class="form-control" value="${profileData.especialidad || ''}">
+            </div>`;
+          }
+        }
+        
+        // Actualizar el DOM solo si los elementos existen
+        if (profileDetails) profileDetails.innerHTML = detailsHTML;
+        if (profileFormFields) profileFormFields.innerHTML = formFieldsHTML;
+      }
+      
+      // Cargar datos iniciales
+      fetchProfileData();
+      
+      // Envío de formulario de actualización de perfil
+      document.getElementById('updateProfileForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const alertElement = document.getElementById('updateAlert');
+        
+        try {
+          // Preparar datos según el rol
+          const updateData = {};
+          
+          // Datos comunes
+          updateData.nombre = document.getElementById('updateNombre').value;
+          
+          // Agregar indicador explícito de rol
+          updateData.isDoctor = isDoctor;
+          
+          if (!isDoctor) {
+            // Datos específicos de paciente
+            updateData.num_tel = document.getElementById('updateTelefono').value;
+          } else if (isDoctor) {
+            // Datos específicos de médico
+            const especialidadInput = document.getElementById('updateEspecialidad');
+            if (especialidadInput) {
+              updateData.especialidad = especialidadInput.value;
+            }
+          }
+          
+          // Enviar actualización al servidor
+          const response = await fetch('/api/users/profile', {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateData)
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error al actualizar perfil');
+          }
+          
+          // Mostrar mensaje de éxito
+          alertElement.textContent = 'Perfil actualizado correctamente';
+          alertElement.className = 'alert alert-success';
+          alertElement.style.display = 'block';
+          
+          // Recargar datos del perfil
+          await fetchProfileData();
+          
+          // Ocultar mensaje después de 3 segundos
+          setTimeout(() => {
+            alertElement.style.display = 'none';
+          }, 3000);
+        } catch (error) {
+          console.error('Error al actualizar perfil:', error);
+          alertElement.textContent = error.message || 'Error al actualizar perfil';
+          alertElement.className = 'alert alert-danger';
+          alertElement.style.display = 'block';
+          
+          setTimeout(() => {
+            alertElement.style.display = 'none';
+          }, 5000);
+        }
+      });
+      
+      // Envío de formulario de cambio de contraseña
+      document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+        const alertElement = document.getElementById('passwordAlert');
+        
+        // Validar que las contraseñas nuevas coinciden
+        if (newPassword !== confirmNewPassword) {
+          alertElement.textContent = 'Las contraseñas nuevas no coinciden';
+          alertElement.className = 'alert alert-danger';
+          alertElement.style.display = 'block';
+          return;
+        }
+        
+        try {
+          // Enviar cambio de contraseña al servidor
+          const response = await fetch('/api/users/password', {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              currentPassword,
+              newPassword
+            })
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error al cambiar contraseña');
+          }
+          
+          // Mostrar mensaje de éxito
+          alertElement.textContent = 'Contraseña actualizada correctamente';
+          alertElement.className = 'alert alert-success';
+          alertElement.style.display = 'block';
+          
+          // Limpiar campos
+          document.getElementById('currentPassword').value = '';
+          document.getElementById('newPassword').value = '';
+          document.getElementById('confirmNewPassword').value = '';
+          
+          // Ocultar mensaje después de 3 segundos
+          setTimeout(() => {
+            alertElement.style.display = 'none';
+          }, 3000);
+        } catch (error) {
+          console.error('Error al cambiar contraseña:', error);
+          alertElement.textContent = error.message || 'Error al cambiar contraseña';
+          alertElement.className = 'alert alert-danger';
+          alertElement.style.display = 'block';
+          
+          setTimeout(() => {
+            alertElement.style.display = 'none';
+          }, 5000);
+        }
+      });
+      
+      // Configurar botón de logout
+      document.getElementById('logoutButton').addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+        window.location.href = '/';
+      });
+    });
+  </script>
+  
+  <style>
+    .profile-container {
+      margin-bottom: 40px;
+    }
+    
+    .row {
+      display: flex;
+      gap: 30px;
+    }
+    
+    .col-left {
+      flex: 1;
+    }
+    
+    .col-right {
+      flex: 2;
+    }
+    
+    .profile-header {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+    }
+    
+    .profile-avatar {
+      margin-bottom: 15px;
+    }
+    
+    .avatar-placeholder {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #0066cc;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: bold;
+      margin: 0 auto;
+    }
+    
+    .user-role {
+      display: inline-block;
+      background-color: #e9ecef;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 14px;
+      color: #495057;
+      margin-top: 5px;
+    }
+    
+    .detail-item {
+      margin-bottom: 12px;
+    }
+    
+    .detail-label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 3px;
+      color: #6c757d;
+    }
+    
+    .detail-value {
+      display: block;
+    }
+    
+    .mt-20 {
+      margin-top: 20px;
+    }
+    
+    .loading-spinner {
+      text-align: center;
+      padding: 20px;
+      color: #6c757d;
+    }
+    
+    /* Estilos específicos para médicos */
+    .doctor-stats {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    
+    .stat-number {
+      display: block;
+      font-size: 24px;
+      font-weight: bold;
+      color: #0066cc;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #6c757d;
+    }
+    
+    .doctor-badge {
+      margin-top: 15px;
+      text-align: center;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    
+    .badge-specialty {
+      background-color: #e8f4fd;
+      color: #0066cc;
+    }
+    
+    .badge-general {
+      background-color: #f1f9f5;
+      color: #198754;
+    }
+    
+    .error-message {
+      color: #842029;
+      background-color: #f8d7da;
+      border: 1px solid #f5c2c7;
+      border-radius: 4px;
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .btn-link {
+      background: none;
+      border: none;
+      color: #0d6efd;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</body>
+</html>

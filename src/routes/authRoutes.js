@@ -1,14 +1,13 @@
 const express = require('express');
-const router = express.Router();
 const authController = require('../controllers/authController');
-const { verifyToken } = require('../middlewares/auth');
+const router = express.Router();
 
-// Rutas públicas
+// Verificar que los métodos del controlador existen
+console.log('Métodos disponibles en authController:', Object.keys(authController));
+
+// Rutas de autenticación
 router.post('/register', authController.register);
+router.post('/register-doctor', authController.registerDoctor);
 router.post('/login', authController.login);
-router.get('/logout', authController.logout);
-
-// Rutas protegidas
-router.get('/me', verifyToken, authController.checkAuth);
 
 module.exports = router;

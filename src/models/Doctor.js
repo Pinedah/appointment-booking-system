@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const User = require('./User');
 
-const Doctor = sequelize.define('Doctor', {
+const Doctor = sequelize.define('Doctors', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -10,28 +10,39 @@ const Doctor = sequelize.define('Doctor', {
   },
   userId: {
     type: DataTypes.INTEGER,
+    allowNull: false,
     references: {
-      model: User,
+      model: 'Users',
       key: 'id'
-    },
-    allowNull: false
+    }
   },
   specialty: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(255),
     allowNull: false
   },
   licenseNumber: {
-    type: DataTypes.STRING,
-    unique: true,
-    allowNull: false
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    unique: true
   },
   bio: {
     type: DataTypes.TEXT,
     allowNull: true
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false
   }
+}, {
+  tableName: 'Doctors',
+  timestamps: true
 });
 
-// Establecer relación con el modelo User
+// Definir la relación
 Doctor.belongsTo(User, { foreignKey: 'userId' });
 
 module.exports = Doctor;

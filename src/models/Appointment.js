@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 const User = require('./User');
 const Doctor = require('./Doctor');
 
-const Appointment = sequelize.define('Appointment', {
+const Appointment = sequelize.define('Appointments', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,19 +11,19 @@ const Appointment = sequelize.define('Appointment', {
   },
   patientId: {
     type: DataTypes.INTEGER,
+    allowNull: false,
     references: {
-      model: User,
+      model: 'Users',
       key: 'id'
-    },
-    allowNull: false
+    }
   },
   doctorId: {
     type: DataTypes.INTEGER,
+    allowNull: false,
     references: {
-      model: Doctor,
+      model: 'Doctors',
       key: 'id'
-    },
-    allowNull: false
+    }
   },
   date: {
     type: DataTypes.DATEONLY,
@@ -44,11 +44,22 @@ const Appointment = sequelize.define('Appointment', {
   notes: {
     type: DataTypes.TEXT,
     allowNull: true
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false
   }
+}, {
+  tableName: 'Appointments',
+  timestamps: true
 });
 
-// Establecer relaciones
-Appointment.belongsTo(User, { as: 'Patient', foreignKey: 'patientId' });
-Appointment.belongsTo(Doctor, { foreignKey: 'doctorId' });
+// Definir relaciones
+Appointment.belongsTo(User, { as: 'patient', foreignKey: 'patientId' });
+Appointment.belongsTo(Doctor, { as: 'doctor', foreignKey: 'doctorId' });
 
 module.exports = Appointment;

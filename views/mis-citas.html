@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Citas - Sistema de Citas Médicas</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">HospitalApp</div>
+      <nav class="nav">
+        <ul>
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/agendar-cita">Agendar Cita</a></li>
+          <li><a href="/mis-citas" class="active">Mis Citas</a></li>
+          <li><a href="/perfil">Mi Perfil</a></li>
+          <li><a href="#" id="logoutButton">Cerrar Sesión</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <div class="page-title">
+        <h1>Mis Citas</h1>
+        <p>Gestiona tus citas médicas programadas</p>
+      </div>
+      
+      <div class="appointments-container">
+        <!-- Pestañas para filtrar citas -->
+        <div class="appointment-tabs">
+          <button class="tab-btn active" data-tab="upcoming">Próximas</button>
+          <button class="tab-btn" data-tab="past">Pasadas</button>
+          <button class="tab-btn" data-tab="canceled">Canceladas</button>
+        </div>
+        
+        <!-- Acciones y filtros -->
+        <div class="appointments-actions">
+          <div class="search-bar">
+            <input type="text" id="searchAppointments" placeholder="Buscar cita...">
+          </div>
+          
+          <div class="action-buttons">
+            <a href="/agendar-cita" class="btn btn-sm">+ Nueva Cita</a>
+          </div>
+        </div>
+        
+        <!-- Lista de citas -->
+        <div class="appointments-list" id="appointmentsList">
+          <div class="loading">Cargando citas...</div>
+        </div>
+      </div>
+      
+      <!-- Modal para detalles de cita -->
+      <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Detalles de la Cita</h3>
+            <span class="close-modal">&times;</span>
+          </div>
+          <div class="modal-body" id="appointmentDetails">
+            <!-- Contenido dinámico -->
+          </div>
+          <div class="modal-footer">
+            <button id="closeModalBtn" class="btn btn-secondary">Cerrar</button>
+            <button id="cancelAppointmentBtn" class="btn btn-danger">Cancelar Cita</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Sistema de Agendamiento de Citas. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Verificar autenticación
+      const token = localStorage.getItem('token');
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      
+      // Determinar el rol del usuario
+      const userRole = userData.role || 'patient';
+      const isDoctor = userRole === 'doctor';
+      
+      // Si es médico, cambiar los títulos
+      if (isDoctor) {
+        document.querySelector('.page-title h1').textContent = 'Mis Consultas';
+        document.querySelector('.page-title p').textContent = 'Gestione las citas médicas de sus pacientes';
+        
+        // Cambiar pestañas para mostrar todas las citas en lugar de "Próximas"
+        const upcomingTab = document.querySelector('[data-tab="upcoming"]');
+        if (upcomingTab) {
+          upcomingTab.textContent = 'Pendientes';
+        }
+      }
+      
+      // Referencias a elementos
+      const appointmentsList = document.getElementById('appointmentsList');
+      const modal = document.getElementById('appointmentModal');
+      const appointmentDetails = document.getElementById('appointmentDetails');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const cancelAppointmentBtn = document.getElementById('cancelAppointmentBtn');
+      const searchInput = document.getElementById('searchAppointments');
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      
+      // Estado actual
+      let activeTab = 'upcoming';
+      let currentAppointments = [];
+      let selectedAppointmentId = null;
+      
+      // Cargar citas según la pestaña activa
+      function loadAppointments() {
+        appointmentsList.innerHTML = '<div class="loading">Cargando citas...</div>';
+        
+        try {
+          // Añadir logging para depurar
+          console.log('Intentando cargar citas...');
+          
+          // Verificar si el token está correctamente formateado
+          if (!token) {
+            appointmentsList.innerHTML = '<div class="error-message">Error: No hay token de autenticación.</div>';
+            return;
+          }
+          
+          // Cargar citas desde la API
+          fetch('/api/appointments', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            console.log('Respuesta recibida:', response.status);
+            if (!response.ok) {
+              return response.text().then(text => {
+                try {
+                  // Intentar parsear como JSON
+                  const data = JSON.parse(text);
+                  throw new Error(data.message || 'Error al obtener citas');
+                } catch(e) {
+                  // Si no es JSON o hay error al parsear
+                  throw new Error(`Error ${response.status}: ${text || 'Error al obtener citas'}`);
+                }
+              });
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Datos recibidos:', data);
+            
+            // Verificar si hay datos de citas
+            if (!data || !Array.isArray(data.appointments)) {
+              console.warn('Formato de respuesta inesperado:', data);
+              
+              // Si no hay citas o no es un array, usar un array vacío
+              const appointments = [];
+              currentAppointments = [];
+              displayAppointments([]);
+              return;
+            }
+            
+            const appointments = data.appointments || [];
+            
+            // Formatear fechas y transformar datos si es necesario
+            const formattedAppointments = appointments.map(appointment => {
+              try {
+                // Usar el estado de la base de datos directamente
+                let estado = appointment.estado || 'scheduled';
+                
+                // Solo si no tiene estado asignado, determinar por la fecha
+                if (!appointment.estado) {
+                  const appointmentDate = new Date(appointment.fecha);
+                  const today = new Date();
+                  
+                  if (appointmentDate < today) {
+                    estado = 'completed';
+                  }
+                }
+                
+                return {
+                  id: appointment.id_cita || appointment.id,
+                  doctor: appointment.doctor || 'Médico no asignado',
+                  fecha: appointment.fecha,
+                  hora: appointment.hora,
+                  motivo: appointment.motivo || 'Sin motivo registrado',
+                  estado: estado,
+                  diagnostico: appointment.diagnostico || ''
+                };
+              } catch(e) {
+                console.error('Error al procesar cita:', e, appointment);
+                return null;
+              }
+            }).filter(Boolean); // Eliminar entradas nulas
+            
+            // Filtrar según la pestaña activa
+            let filteredAppointments = [];
+            const now = new Date();
+            
+            switch(activeTab) {
+              case 'upcoming':
+                filteredAppointments = formattedAppointments.filter(a => 
+                  a.estado === 'scheduled' && new Date(a.fecha) >= now
+                );
+                break;
+              case 'past':
+                filteredAppointments = formattedAppointments.filter(a => 
+                  a.estado === 'completed' || (a.estado === 'scheduled' && new Date(a.fecha) < now)
+                );
+                break;
+              case 'canceled':
+                filteredAppointments = formattedAppointments.filter(a => 
+                  a.estado === 'cancelled'
+                );
+                break;
+            }
+            
+            // Almacenar citas actuales y mostrarlas
+            currentAppointments = filteredAppointments;
+            displayAppointments(filteredAppointments);
+          })
+          .catch(error => {
+            console.error('Error al cargar citas:', error);
+            
+            // Usar datos de ejemplo como fallback para demostración
+            console.warn('Usando datos de ejemplo como fallback');
+            useSampleData();
+          });
+        } catch (error) {
+          console.error('Error general:', error);
+          appointmentsList.innerHTML = '<div class="error-message">Error al cargar citas. Intente nuevamente.</div>';
+          
+          // Usar datos de ejemplo como fallback para demostración
+          useSampleData();
+        }
+      }
+      
+      // Función para usar datos de muestra cuando falla la API
+      function useSampleData() {
+        console.log('Cargando datos de muestra...');
+        
+        const sampleAppointments = [
+          {
+            id: 1,
+            doctor: 'Dr. Gómez',
+            fecha: '2025-06-15',
+            hora: '10:00',
+            motivo: 'Consulta general',
+            estado: 'scheduled'
+          },
+          {
+            id: 2,
+            doctor: 'Dra. Rivas',
+            fecha: '2025-06-20',
+            hora: '11:30',
+            motivo: 'Revisión de exámenes',
+            estado: 'scheduled'
+          },
+          {
+            id: 3,
+            doctor: 'Dr. Salas',
+            fecha: '2025-05-10',
+            hora: '09:00',
+            motivo: 'Control de presión',
+            estado: 'completed'
+          },
+          {
+            id: 4,
+            doctor: 'Dra. Méndez',
+            fecha: '2025-05-05',
+            hora: '16:00',
+            motivo: 'Dolor de cabeza recurrente',
+            estado: 'cancelled'
+          }
+        ];
+        
+        let filteredAppointments = [];
+        const now = new Date();
+        
+        switch(activeTab) {
+          case 'upcoming':
+            filteredAppointments = sampleAppointments.filter(a => 
+              a.estado === 'scheduled' && new Date(a.fecha) >= now
+            );
+            break;
+          case 'past':
+            filteredAppointments = sampleAppointments.filter(a => 
+              a.estado === 'completed' || (a.estado === 'scheduled' && new Date(a.fecha) < now)
+            );
+            break;
+          case 'canceled':
+            filteredAppointments = sampleAppointments.filter(a => a.estado === 'cancelled');
+            break;
+        }
+        
+        currentAppointments = filteredAppointments;
+        displayAppointments(filteredAppointments);
+        
+        // Mostrar mensaje de notificación
+        const noticeDiv = document.createElement('div');
+        noticeDiv.className = 'notice';
+        noticeDiv.innerHTML = `
+          <strong>Información:</strong> Mostrando datos de ejemplo. 
+          <button class="btn-link" onclick="location.reload()">Intentar de nuevo</button>
+        `;
+        appointmentsList.parentNode.insertBefore(noticeDiv, appointmentsList);
+      }
+      
+      // Mostrar citas en la interfaz
+      function displayAppointments(appointments) {
+        if (appointments.length === 0) {
+          appointmentsList.innerHTML = '<div class="empty-state">No se encontraron citas.</div>';
+          return;
+        }
+        
+        let html = '';
+        appointments.forEach(appointment => {
+          const appointmentDate = new Date(appointment.fecha);
+          
+          // Formatear fecha para mostrar
+          const formattedDate = appointmentDate.toLocaleDateString('es-ES', {
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric'
+          });
+          
+          const statusClass = appointment.estado === 'scheduled' ? 'status-scheduled' : 
+                             (appointment.estado === 'completed' ? 'status-completed' : 'status-cancelled');
+          
+          const statusText = appointment.estado === 'scheduled' ? 'Programada' : 
+                            (appointment.estado === 'completed' ? 'Completada' : 'Cancelada');
+          
+          // Determinar qué información mostrar según el rol
+          const primaryName = isDoctor ? appointment.paciente : appointment.doctor;
+          const primaryLabel = isDoctor ? 'Paciente' : 'Doctor';
+          
+          html += `
+            <div class="appointment-card" data-id="${appointment.id}">
+              <div class="appointment-header">
+                <div class="appointment-date">
+                  <div class="date-day">${appointmentDate.getDate()}</div>
+                  <div class="date-month">${appointmentDate.toLocaleDateString('es-ES', {month: 'short'})}</div>
+                </div>
+                <div class="appointment-time">${appointment.hora}</div>
+              </div>
+              
+              <div class="appointment-body">
+                <div class="primary-name"><strong>${primaryLabel}:</strong> ${primaryName}</div>
+                <div class="appointment-reason">${appointment.motivo}</div>
+              </div>
+              
+              <div class="appointment-footer">
+                <span class="appointment-status ${statusClass}">${statusText}</span>
+                <button class="btn-view-details">Ver detalles</button>
+              </div>
+            </div>
+          `;
+        });
+        
+        appointmentsList.innerHTML = html;
+        
+        // Agregar eventos para ver detalles
+        document.querySelectorAll('.btn-view-details').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const appointmentId = this.closest('.appointment-card').dataset.id;
+            showAppointmentDetails(appointmentId);
+          });
+        });
+      }
+      
+      // Mostrar detalles de una cita
+      function showAppointmentDetails(appointmentId) {
+        const appointment = currentAppointments.find(a => a.id === parseInt(appointmentId));
+        selectedAppointmentId = parseInt(appointmentId);
+        
+        if (!appointment) return;
+        
+        const appointmentDate = new Date(appointment.fecha);
+        const formattedDate = appointmentDate.toLocaleDateString('es-ES', {
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric'
+        });
+        
+        const isPastAppointment = appointmentDate < new Date();
+        const isScheduled = appointment.estado === 'scheduled';
+        
+        let statusText = '';
+        switch(appointment.estado) {
+          case 'scheduled': statusText = 'Programada'; break;
+          case 'completed': statusText = 'Completada'; break;
+          case 'cancelled': statusText = 'Cancelada'; break;
+        }
+        
+        // Construir HTML según el rol
+        let detailsHTML = `
+          <div class="detail-rows">
+            ${isDoctor ? 
+              `<div class="detail-row">
+                <span class="detail-label">Paciente:</span>
+                <span class="detail-value">${appointment.paciente}</span>
+              </div>` : 
+              `<div class="detail-row">
+                <span class="detail-label">Médico:</span>
+                <span class="detail-value">${appointment.doctor}</span>
+              </div>`
+            }
+            <div class="detail-row">
+              <span class="detail-label">Fecha:</span>
+              <span class="detail-value">${formattedDate}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Hora:</span>
+              <span class="detail-value">${appointment.hora}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Motivo:</span>
+              <span class="detail-value">${appointment.motivo}</span>
+            </div>`;
+            
+        // Añadir campo de diagnóstico editable para médicos
+        if (isDoctor) {
+          detailsHTML += `
+            <div class="detail-row">
+              <span class="detail-label">Diagnóstico:</span>
+              <textarea id="appointmentDiagnostic" class="form-control" rows="3">${appointment.diagnostico || ''}</textarea>
+            </div>`;
+        } else if (appointment.diagnostico) {
+          detailsHTML += `
+            <div class="detail-row">
+              <span class="detail-label">Diagnóstico:</span>
+              <span class="detail-value">${appointment.diagnostico}</span>
+            </div>`;
+        }
+        
+        detailsHTML += `
+            <div class="detail-row">
+              <span class="detail-label">Estado:</span>
+              <span class="detail-value status-badge status-${appointment.estado}">${statusText}</span>
+            </div>
+          </div>
+        `;
+        
+        appointmentDetails.innerHTML = detailsHTML;
+        
+        // Configurar botones según rol y estado
+        if (isDoctor) {
+          // Los médicos pueden actualizar diagnóstico pero no cancelar citas
+          cancelAppointmentBtn.style.display = 'none';
+          document.getElementById('closeModalBtn').textContent = isPastAppointment ? "Cerrar" : "Guardar y cerrar";
+        } else {
+          // Pacientes pueden cancelar citas próximas que estén programadas
+          cancelAppointmentBtn.style.display = (isScheduled && !isPastAppointment) ? 'block' : 'none';
+          document.getElementById('closeModalBtn').textContent = "Cerrar";
+        }
+        
+        modal.style.display = 'block';
+      }
+      
+      // Cerrar modal
+      function closeModal() {
+        // Si es médico y hay un diagnóstico modificado, guardarlo
+        if (isDoctor && selectedAppointmentId) {
+          const diagnosticTextarea = document.getElementById('appointmentDiagnostic');
+          if (diagnosticTextarea) {
+            const newDiagnostic = diagnosticTextarea.value;
+            const appointment = currentAppointments.find(a => a.id === selectedAppointmentId);
+            
+            if (appointment && appointment.diagnostico !== newDiagnostic) {
+              // Enviar actualización de diagnóstico
+              updateDiagnostic(selectedAppointmentId, newDiagnostic);
+            }
+          }
+        }
+        
+        modal.style.display = 'none';
+        selectedAppointmentId = null;
+      }
+      
+      // Actualizar diagnóstico (sólo para médicos)
+      function updateDiagnostic(appointmentId, diagnostic) {
+        if (!isDoctor) return;
+        
+        fetch(`/api/appointments/${appointmentId}/diagnostic`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ diagnostic })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al actualizar diagnóstico');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Diagnóstico actualizado:', data);
+          // Actualizar en la lista local
+          const appointment = currentAppointments.find(a => a.id === appointmentId);
+          if (appointment) {
+            appointment.diagnostico = diagnostic;
+          }
+        })
+        .catch(error => {
+          console.error('Error al actualizar diagnóstico:', error);
+          alert('Error al guardar el diagnóstico. Por favor intente nuevamente.');
+        });
+      }
+      
+      // Cancelar cita
+      function cancelAppointment() {
+        if (!selectedAppointmentId) return;
+        
+        // Confirmar cancelación
+        if (!confirm('¿Está seguro que desea cancelar esta cita?')) {
+          return;
+        }
+        
+        try {
+          fetch(`/api/appointments/${selectedAppointmentId}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            if (!response.ok) {
+              return response.text().then(text => {
+                try {
+                  const data = JSON.parse(text);
+                  throw new Error(data.message || 'Error al cancelar la cita');
+                } catch(e) {
+                  throw new Error(`Error ${response.status}: ${text || 'Error al cancelar la cita'}`);
+                }
+              });
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Respuesta de cancelación:', data);
+            
+            // Mostrar mensaje de éxito
+            alert('Cita cancelada exitosamente');
+            
+            // Si la respuesta incluye la cita actualizada, actualizar localmente
+            if (data.appointment) {
+              const appointmentToUpdate = currentAppointments.find(a => 
+                a.id === parseInt(data.appointment.id)
+              );
+              if (appointmentToUpdate) {
+                appointmentToUpdate.estado = 'cancelled';
+              }
+            }
+            
+            // Cerrar modal y recargar citas para reflejar el cambio
+            closeModal();
+            loadAppointments();
+          })
+          .catch(error => {
+            console.error('Error al cancelar cita:', error);
+            
+            // Simular cancelación en modo demo si la API falla
+            const appointmentToUpdate = currentAppointments.find(a => a.id === selectedAppointmentId);
+            if (appointmentToUpdate) {
+              appointmentToUpdate.estado = 'cancelled';
+              closeModal();
+              displayAppointments(currentAppointments.filter(a => 
+                a.estado !== 'cancelled' || activeTab === 'canceled'
+              ));
+            }
+            
+            alert('Cita cancelada (modo demostración)');
+          });
+        } catch(error) {
+          console.error('Error al enviar solicitud:', error);
+          alert('Error al comunicarse con el servidor');
+        }
+      }
+      
+      // Eventos de búsqueda
+      searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        if (searchTerm.length === 0) {
+          // Si no hay texto de búsqueda, mostrar todas las citas
+          displayAppointments(currentAppointments);
+          return;
+        }
+        
+        const filteredAppointments = currentAppointments.filter(appointment => 
+          appointment.doctor.toLowerCase().includes(searchTerm) || 
+          appointment.motivo.toLowerCase().includes(searchTerm)
+        );
+        
+        displayAppointments(filteredAppointments);
+      });
+      
+      // Eventos de pestañas
+      tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          activeTab = this.dataset.tab;
+          loadAppointments();
+        });
+      });
+      
+      // Eventos del modal
+      closeModalBtn.addEventListener('click', closeModal);
+      document.querySelector('.close-modal').addEventListener('click', closeModal);
+      cancelAppointmentBtn.addEventListener('click', cancelAppointment);
+      
+      // Cerrar modal al hacer clic fuera
+      window.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+      
+      // Configurar botón de logout
+      document.getElementById('logoutButton').addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+        window.location.href = '/';
+      });
+      
+      // Cargar citas iniciales
+      loadAppointments();
+    });
+  </script>
+  
+  <style>
+    .appointments-container {
+      margin-bottom: 30px;
+    }
+    
+    .appointment-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      opacity: 0.7;
+      position: relative;
+    }
+    
+    .tab-btn.active {
+      opacity: 1;
+      font-weight: bold;
+    }
+    
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #0066cc;
+    }
+    
+    .appointments-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .search-bar input {
+      padding: 8px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 250px;
+    }
+    
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    
+    .appointments-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .loading, .empty-state, .error-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 30px;
+      color: #6c757d;
+    }
+    
+    .appointment-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .appointment-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .appointment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f8f9fa;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .appointment-date {
+      text-align: center;
+    }
+    
+    .date-day {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    
+    .date-month {
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+    
+    .appointment-time {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .appointment-body {
+      padding: 15px;
+    }
+    
+    .doctor-name {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    
+    .appointment-reason {
+      color: #6c757d;
+      font-size: 14px;
+    }
+    
+    .appointment-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      border-top: 1px solid #ddd;
+    }
+    
+    .appointment-status {
+      font-size: 13px;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+    
+    .status-scheduled {
+      background-color: #cff4fc;
+      color: #055160;
+    }
+    
+    .status-completed {
+      background-color: #d1e7dd;
+      color: #0f5132;
+    }
+    
+    .status-cancelled {
+      background-color: #f8d7da;
+      color: #842029;
+    }
+    
+    .btn-view-details {
+      background: none;
+      border: none;
+      color: #0066cc;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .btn-view-details:hover {
+      text-decoration: underline;
+    }
+    
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 0;
+      border-radius: 8px;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #ddd;
+      position: relative;
+    }
+    
+    .modal-header h3 {
+      margin: 0;
+    }
+    
+    .close-modal {
+      position: absolute;
+      right: 20px;
+      top: 15px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      padding: 20px;
+    }
+    
+    .modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .detail-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .detail-row {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .detail-label {
+      font-weight: bold;
+      color: #6c757d;
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+    
+    .detail-value {
+      font-size: 16px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    .notice {
+      background-color: #fff3cd;
+      color: #664d03;
+      padding: 10px 15px;
+      border: 1px solid #ffecb5;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .btn-link {
+      background: none;
+      border: none;
+      color: #0d6efd;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    
+    .primary-name {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    
+    textarea.form-control {
+      resize: vertical;
+    }
+  </style>
+</body>
+</html>

@@ -28,8 +28,8 @@
           <div id="loginAlert"></div>
           
           <div class="form-group">
-            <label for="email">Correo Electrónico</label>
-            <input type="email" id="email" class="form-control" placeholder="correo@ejemplo.com" required>
+            <label for="username">Nombre de Usuario</label>
+            <input type="text" id="username" class="form-control" placeholder="Tu nombre de usuario" required>
           </div>
           
           <div class="form-group">
@@ -58,7 +58,7 @@
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
-      const email = document.getElementById('email').value;
+      const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const alertElement = document.getElementById('loginAlert');
       
@@ -68,7 +68,7 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ username, password })
         });
         
         const data = await response.json();
@@ -80,16 +80,11 @@
           
           // Guardar el token en localStorage
           localStorage.setItem('token', data.token);
+          localStorage.setItem('userData', JSON.stringify(data.user));
           
-          // Redireccionar según el rol del usuario
+          // Redireccionar al inicio (index) en lugar de dashboards específicos
           setTimeout(() => {
-            if (data.user.role === 'admin') {
-              window.location.href = '/admin/dashboard';
-            } else if (data.user.role === 'doctor') {
-              window.location.href = '/doctor/dashboard';
-            } else {
-              window.location.href = '/patient/dashboard';
-            }
+            window.location.href = '/';
           }, 1000);
         } else {
           // Error en login

@@ -1,53 +1,19 @@
 const express = require('express');
+const appointmentController = require('../controllers/appointmentController');
+const { verifyToken } = require('../middleware/authMiddleware');
+
 const router = express.Router();
-const { verifyToken, isDoctor } = require('../middlewares/auth');
 
-// Aquí normalmente importarías el controlador
-// const appointmentController = require('../controllers/appointmentController');
+// Todas las rutas requieren autenticación
+router.use(verifyToken);
 
-// Obtener todas las citas (con filtros opcionales)
-router.get('/', verifyToken, (req, res) => {
-  // appointmentController.getAppointments
-  res.json({ message: 'Lista de citas' });
-});
+// Ruta para obtener médicos
+router.get('/doctors', appointmentController.getDoctors);
 
-// Obtener una cita específica
-router.get('/:id', verifyToken, (req, res) => {
-  // appointmentController.getAppointmentById
-  res.json({ message: `Detalles de la cita ${req.params.id}` });
-});
-
-// Crear una nueva cita
-router.post('/', verifyToken, (req, res) => {
-  // appointmentController.createAppointment
-  res.json({ 
-    message: 'Cita creada',
-    appointment: req.body
-  });
-});
-
-// Actualizar una cita
-router.put('/:id', verifyToken, (req, res) => {
-  // appointmentController.updateAppointment
-  res.json({ 
-    message: `Cita ${req.params.id} actualizada`,
-    appointment: req.body
-  });
-});
-
-// Cancelar una cita
-router.patch('/:id/cancel', verifyToken, (req, res) => {
-  // appointmentController.cancelAppointment
-  res.json({ message: `Cita ${req.params.id} cancelada` });
-});
-
-// Marcar cita como completada (solo médicos)
-router.patch('/:id/complete', verifyToken, isDoctor, (req, res) => {
-  // appointmentController.completeAppointment
-  res.json({ 
-    message: `Cita ${req.params.id} completada`,
-    notes: req.body.notes
-  });
-});
+// Rutas para citas
+router.post('/', appointmentController.createAppointment);
+router.get('/', appointmentController.getUserAppointments);
+router.delete('/:id', appointmentController.cancelAppointment);
+router.put('/:id/diagnostic', appointmentController.updateDiagnostic);
 
 module.exports = router;

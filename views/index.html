@@ -13,8 +13,11 @@
       <nav class="nav">
         <ul>
           <li><a href="/">Inicio</a></li>
-          <li><a href="/login">Iniciar Sesión</a></li>
-          <li><a href="/register">Registrarse</a></li>
+          <li id="loginLink"><a href="/login">Iniciar Sesión</a></li>
+          <li id="registerLink"><a href="/register">Registrarse</a></li>
+          <li id="appointmentLink" style="display: none;"><a href="/agendar-cita">Agendar Cita</a></li>
+          <li id="profileLink" style="display: none;"><a href="/perfil">Mi Perfil</a></li>
+          <li id="logoutLink" style="display: none;"><a href="#" id="logoutButton">Cerrar Sesión</a></li>
         </ul>
       </nav>
     </div>
@@ -22,7 +25,21 @@
 
   <main class="main">
     <div class="container">
-      <section class="hero">
+      <!-- Panel de bienvenida personalizado -->
+      <section class="user-welcome" id="userWelcome" style="display: none;">
+        <div class="card">
+          <div id="userInfo">
+            <!-- La información del usuario se cargará aquí -->
+          </div>
+          <div class="cta-buttons">
+            <a href="/agendar-cita" class="btn btn-success">Agendar una cita</a>
+            <a href="/mis-citas" class="btn">Mis citas</a>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Panel de bienvenida para visitantes -->
+      <section class="hero" id="guestWelcome">
         <div class="card">
           <h1>Bienvenido al Sistema de Agendamiento de Citas</h1>
           <p>Gestiona tus citas médicas de forma eficiente y sencilla.</p>
@@ -59,6 +76,87 @@
     </div>
   </footer>
 
-  <script src="/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Verificar si el usuario está logueado
+      const token = localStorage.getItem('token');
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      
+      if (token && userData) {
+        // Mostrar sección de usuario logueado
+        document.getElementById('userWelcome').style.display = 'block';
+        document.getElementById('guestWelcome').style.display = 'none';
+        
+        // Actualizar enlaces de navegación
+        document.getElementById('loginLink').style.display = 'none';
+        document.getElementById('registerLink').style.display = 'none';
+        document.getElementById('appointmentLink').style.display = 'inline-block';
+        document.getElementById('profileLink').style.display = 'inline-block';
+        document.getElementById('logoutLink').style.display = 'inline-block';
+        
+        // Crear contenido personalizado según el rol
+        let welcomeHTML = '';
+        if (userData.role === 'doctor') {
+          welcomeHTML = `
+            <h2>Bienvenido, Dr(a). ${userData.userData?.nombre || 'Estimado médico'}</h2>
+            <p>Panel de médico - Gestiona tus consultas y pacientes.</p>
+            <div class="user-stats">
+              <div class="stat">
+                <strong>Tipo:</strong> ${userData.userData?.tipo_medico || 'No especificado'}
+              </div>
+            </div>
+          `;
+        } else {
+          welcomeHTML = `
+            <h2>Bienvenido, ${userData.userData?.nombre || 'Estimado paciente'}</h2>
+            <p>Accede a todos los servicios de nuestro sistema.</p>
+            <div class="user-stats">
+              <div class="stat">
+                <strong>Teléfono:</strong> ${userData.userData?.num_tel || 'No registrado'}
+              </div>
+              <div class="stat">
+                <strong>Tipo:</strong> ${userData.userData?.tipo_paciente || 'No especificado'}
+              </div>
+            </div>
+          `;
+        }
+        
+        document.getElementById('userInfo').innerHTML = welcomeHTML;
+      } else {
+        // Usuario no logueado, mostrar sección de invitado
+        document.getElementById('userWelcome').style.display = 'none';
+        document.getElementById('guestWelcome').style.display = 'block';
+      }
+      
+      // Configurar botón de logout
+      document.getElementById('logoutButton').addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+        window.location.href = '/';
+      });
+    });
+  </script>
+
+  <style>
+    .user-welcome {
+      margin-bottom: 30px;
+    }
+    
+    .user-stats {
+      display: flex;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .stat {
+      background-color: #f8f9fa;
+      padding: 10px 15px;
+      border-radius: 4px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+  </style>
 </body>
 </html>
