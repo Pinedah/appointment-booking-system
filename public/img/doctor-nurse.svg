@@ -1,0 +1,47 @@
+<svg width="400" height="500" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Nurse with clipboard -->
+  <g transform="translate(20, 20)">
+    <!-- Hair -->
+    <path d="M170 80C170 50 200 20 240 30C280 40 290 70 290 100V120H170V80Z" fill="#333" stroke="#333" stroke-width="1"/>
+    
+    <!-- Face -->
+    <circle cx="230" cy="110" r="50" fill="#FFDBAC" stroke="#333" stroke-width="2"/>
+    
+    <!-- Eyes -->
+    <ellipse cx="210" cy="100" rx="5" ry="7" fill="#333"/>
+    <ellipse cx="250" cy="100" rx="5" ry="7" fill="#333"/>
+    
+    <!-- Mouth -->
+    <path d="M220 130C230 135 240 135 245 130" stroke="#333" stroke-width="2" fill="none"/>
+    
+    <!-- Body -->
+    <path d="M180 160H280V400H180V160Z" fill="#5b8bd3" stroke="#333" stroke-width="2"/>
+    
+    <!-- Arms -->
+    <path d="M180 180L140 220V320H180V180Z" fill="#5b8bd3" stroke="#333" stroke-width="2"/>
+    <path d="M280 180L320 220V320H280V180Z" fill="#5b8bd3" stroke="#333" stroke-width="2"/>
+    
+    <!-- Pants -->
+    <path d="M180 400H280V450L250 470H210L180 450V400Z" fill="#233567" stroke="#333" stroke-width="2"/>
+    
+    <!-- Collar -->
+    <path d="M180 160V180H280V160H230H180Z" fill="white" stroke="#333" stroke-width="2"/>
+    
+    <!-- Clipboard -->
+    <rect x="150" y="250" width="70" height="100" rx="5" fill="#EEE" stroke="#333" stroke-width="2"/>
+    <rect x="155" y="270" width="60" height="10" rx="2" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="155" y="285" width="60" height="10" rx="2" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="155" y="300" width="60" height="10" rx="2" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="155" y="315" width="60" height="10" rx="2" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="155" y="330" width="40" height="10" rx="2" fill="white" stroke="#333" stroke-width="1"/>
+    <circle cx="185" cy="260" r="5" fill="#333"/>
+    
+    <!-- Face Mask -->
+    <path d="M210 120C210 110 250 110 250 120V140C250 150 210 150 210 140V120Z" fill="white" stroke="#333" stroke-width="1"/>
+    <path d="M210 130H250" stroke="#333" stroke-width="1"/>
+    
+    <!-- Stethoscope -->
+    <path d="M270 180C270 180 290 195 290 210" stroke="#333" stroke-width="2" fill="none"/>
+    <circle cx="290" cy="220" r="10" fill="#EEE" stroke="#333" stroke-width="2"/>
+  </g>
+</svg>

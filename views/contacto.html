@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacto - Salud Integral</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/3b77b019a4.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <div class="logo-text">
+          Salud <span>Integral</span>
+        </div>
+      </div>
+      
+      <nav class="nav">
+        <ul id="navMenu">
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/quienes-somos">Quiénes Somos</a></li>
+          <li><a href="/servicios">Servicios</a></li>
+          <li><a href="/contacto" class="active">Contacto</a></li>
+          <li><a href="/login">Iniciar Sesión</a></li>
+        </ul>
+      </nav>
+      
+      <div class="contact-info">
+        <i class="fas fa-phone-alt"></i>
+        <span class="contact-number">+1111111111111</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1 class="page-title">Contacto</h1>
+      <p class="page-subtitle">Estamos aquí para responder a todas sus preguntas</p>
+    </div>
+  </section>
+
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-wrapper">
+        <div class="contact-info-card">
+          <h2>Información de Contacto</h2>
+          <p>Puede comunicarse con nosotros a través de los siguientes medios o visitarnos en nuestra ubicación física.</p>
+          
+          <div class="contact-details">
+            <div class="contact-detail-item">
+              <div class="contact-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="contact-text">
+                <h3>Dirección</h3>
+                <p>Calle Principal #123<br>Ciudad, País<br>Código Postal 12345</p>
+              </div>
+            </div>
+            
+            <div class="contact-detail-item">
+              <div class="contact-icon">
+                <i class="fas fa-phone-alt"></i>
+              </div>
+              <div class="contact-text">
+                <h3>Teléfono</h3>
+                <p>+1111111111111 (General)<br>+2222222222222 (Emergencias)</p>
+              </div>
+            </div>
+            
+            <div class="contact-detail-item">
+              <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="contact-text">
+                <h3>Correo Electrónico</h3>
+                <p>contacto@saludintegral.com<br>citas@saludintegral.com</p>
+              </div>
+            </div>
+            
+            <div class="contact-detail-item">
+              <div class="contact-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="contact-text">
+                <h3>Horario</h3>
+                <p>Lunes a Viernes: 8:00 AM - 8:00 PM<br>Sábados: 9:00 AM - 2:00 PM<br>Domingos: Cerrado</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="social-media">
+            <h3>Síguenos</h3>
+            <div class="social-icons">
+              <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="contact-form-card">
+          <h2>Envíenos un mensaje</h2>
+          <p>Complete el formulario a continuación y nos pondremos en contacto con usted lo antes posible.</p>
+          
+          <form id="contactForm">
+            <div id="formAlert" class="alert" style="display: none;"></div>
+            
+            <div class="form-group">
+              <label for="name">Nombre completo</label>
+              <div class="input-icon">
+                <i class="fas fa-user"></i>
+                <input type="text" id="name" class="form-control" placeholder="Ingrese su nombre" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Correo electrónico</label>
+              <div class="input-icon">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" class="form-control" placeholder="Ingrese su correo" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="phone">Teléfono</label>
+              <div class="input-icon">
+                <i class="fas fa-phone-alt"></i>
+                <input type="tel" id="phone" class="form-control" placeholder="Ingrese su número de teléfono">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="subject">Asunto</label>
+              <div class="input-icon">
+                <i class="fas fa-tag"></i>
+                <select id="subject" class="form-control" required>
+                  <option value="">Seleccione un asunto</option>
+                  <option value="citas">Citas médicas</option>
+                  <option value="servicios">Información de servicios</option>
+                  <option value="seguros">Seguros médicos</option>
+                  <option value="facturacion">Facturación</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Mensaje</label>
+              <div class="input-icon textarea-icon">
+                <i class="fas fa-comment"></i>
+                <textarea id="message" class="form-control" rows="5" placeholder="Ingrese su mensaje" required></textarea>
+              </div>
+            </div>
+            
+            <div class="form-group form-check">
+              <input type="checkbox" id="privacy" class="form-check-input" required>
+              <label for="privacy" class="form-check-label">Acepto la política de privacidad y el procesamiento de mis datos personales.</label>
+            </div>
+            
+            <button type="submit" class="btn btn-block">Enviar Mensaje</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="map-section">
+    <div class="container">
+      <h2 class="section-title">Nuestra ubicación</h2>
+      <div class="map-container">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26270.754301132945!2d-99.1701271692034!3d19.432607627600137!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1f92c70a5c50b%3A0x9a0b0c494548f6c1!2sCentro%20Hist%C3%B3rico%20de%20la%20Cdad.%20de%20M%C3%A9xico%2C%20Centro%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX!5e0!3m2!1ses-419!2smx!4v1701617034494!5m2!1ses-419!2smx" 
+          width="100%" 
+          height="450" 
+          style="border:0;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <div class="container">
+      <h2 class="section-title">Preguntas Frecuentes</h2>
+      
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>¿Cómo puedo agendar una cita médica?</h3>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Para agendar una cita médica, puede:</p>
+            <ul>
+              <li>Usar nuestro sistema de agendamiento en línea</li>
+              <li>Llamar a nuestro centro de atención telefónica</li>
+              <li>Visitar nuestras instalaciones y agendar personalmente en recepción</li>
+            </ul>
+            <p>Le recomendamos agendar con anticipación para asegurar disponibilidad con el especialista de su elección.</p>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>¿Cómo puedo cancelar o reprogramar una cita?</h3>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Puede cancelar o reprogramar su cita a través de nuestro sistema en línea o llamando a nuestro centro de atención. Por favor, hágalo con al menos 24 horas de anticipación para liberar el espacio para otros pacientes.</p>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>¿Qué debo llevar a mi primera consulta?</h3>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Para su primera consulta, por favor traiga:</p>
+            <ul>
+              <li>Identificación oficial con foto</li>
+              <li>Tarjeta de seguro médico (si aplica)</li>
+              <li>Historial médico relevante o resultados de exámenes previos</li>
+              <li>Lista de medicamentos que esté tomando actualmente</li>
+              <li>Método de pago (efectivo, tarjeta o cheque)</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>¿Aceptan seguros médicos?</h3>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Sí, trabajamos con una amplia variedad de compañías de seguros. Le recomendamos confirmar la cobertura de su plan específico antes de su cita. Puede consultar nuestra página de servicios para ver la lista completa de aseguradoras con las que trabajamos.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>¿Necesita atención médica?</h2>
+        <p>Agende su cita hoy mismo y reciba atención de calidad con nuestros especialistas.</p>
+        <a href="/agendar-cita" class="btn btn-lg">Agendar una Cita</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>Salud Integral</h3>
+          <p>Tu bienestar es nuestra prioridad. Ofrecemos servicios de salud de alta calidad con profesionales expertos en diferentes especialidades.</p>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Enlaces rápidos</h3>
+          <ul>
+            <li><a href="/quienes-somos">Quiénes somos</a></li>
+            <li><a href="/servicios">Servicios</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Contacto</h3>
+          <p><i class="fas fa-map-marker-alt"></i> Calle Principal #123, Ciudad</p>
+          <p><i class="fas fa-phone-alt"></i> +1111111111111</p>
+          <p><i class="fas fa-envelope"></i> contacto@saludintegral.com</p>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Salud Integral - Sistema de Agendamiento de Citas. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Verificar si el usuario está logueado
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+      
+      if (token) {
+        // Actualizar enlaces de navegación
+        document.querySelector('#navMenu').innerHTML = `
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/quienes-somos">Quiénes Somos</a></li>
+          <li><a href="/servicios">Servicios</a></li>
+          <li><a href="/contacto" class="active">Contacto</a></li>
+          <li><a href="/agendar-cita">Agendar Cita</a></li>
+          <li><a href="/mis-citas">Mis Citas</a></li>
+          <li><a href="/perfil">Mi Perfil</a></li>
+          <li><a href="#" id="logoutButton">Cerrar Sesión</a></li>
+        `;
+        
+        // Añadir evento de cierre de sesión
+        document.getElementById('logoutButton').addEventListener('click', function(e) {
+          e.preventDefault();
+          localStorage.removeItem('token');
+          localStorage.removeItem('userData');
+          window.location.href = '/';
+        });
+      }
+      
+      // Manejo del formulario de contacto
+      document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const alertElement = document.getElementById('formAlert');
+        
+        // Simular envío exitoso
+        alertElement.className = 'alert alert-success';
+        alertElement.textContent = 'Mensaje enviado con éxito. Nos pondremos en contacto pronto.';
+        alertElement.style.display = 'block';
+        
+        // Resetear formulario
+        this.reset();
+        
+        // Ocultar mensaje después de 5 segundos
+        setTimeout(() => {
+          alertElement.style.display = 'none';
+        }, 5000);
+      });
+      
+      // Eventos para el acordeón de FAQ
+      const faqQuestions = document.querySelectorAll('.faq-question');
+      
+      faqQuestions.forEach(question => {
+        question.addEventListener('click', function() {
+          const answer = this.nextElementSibling;
+          const allAnswers = document.querySelectorAll('.faq-answer');
+          const allQuestions = document.querySelectorAll('.faq-question');
+          
+          // Cerrar todos los acordeones
+          allAnswers.forEach(item => {
+            if (item !== answer) {
+              item.style.maxHeight = null;
+              item.classList.remove('active');
+            }
+          });
+          
+          allQuestions.forEach(item => {
+            if (item !== this) {
+              item.classList.remove('active');
+            }
+          });
+          
+          // Alternar el estado del acordeón actual
+          this.classList.toggle('active');
+          answer.classList.toggle('active');
+          
+          if (answer.classList.contains('active')) {
+            answer.style.maxHeight = answer.scrollHeight + "px";
+          } else {
+            answer.style.maxHeight = null;
+          }
+        });
+      });
+    });
+  </script>
+  
+  <style>
+    .page-hero {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 60px 0;
+      text-align: center;
+      margin-bottom: 0;
+    }
+    
+    .page-title {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .page-subtitle {
+      font-size: 1.25rem;
+      opacity: 0.9;
+    }
+    
+    /* Contact Section */
+    .contact-section {
+      padding: 60px 0;
+      background-color: white;
+    }
+    
+    .contact-wrapper {
+      display: flex;
+      gap: 30px;
+    }
+    
+    .contact-info-card {
+      flex: 1;
+      background-color: var(--background-light);
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .contact-info-card h2 {
+      color: var(--accent-color);
+      margin-bottom: 15px;
+    }
+    
+    .contact-form-card {
+      flex: 1.5;
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .contact-form-card h2 {
+      color: var(--accent-color);
+      margin-bottom: 15px;
+    }
+    
+    .contact-form-card p,
+    .contact-info-card p {
+      margin-bottom: 25px;
+      color: var(--gray-dark);
+    }
+    
+    /* Input con icono */
+    .input-icon {
+      position: relative;
+    }
+    
+    .input-icon i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-dark);
+    }
+    
+    .input-icon input,
+    .input-icon select {
+      padding-left: 40px;
+    }
+    
+    .textarea-icon i {
+      top: 25px;
+      transform: none;
+    }
+    
+    .textarea-icon textarea {
+      padding-left: 40px;
+    }
+    
+    /* Contact Details */
+    .contact-details {
+      margin: 30px 0;
+    }
+    
+    .contact-detail-item {
+      display: flex;
+      margin-bottom: 25px;
+    }
+    
+    .contact-icon {
+      width: 50px;
+      height: 50px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+    
+    .contact-icon i {
+      font-size: 20px;
+      color: var(--accent-color);
+    }
+    
+    .contact-text h3 {
+      margin-bottom: 5px;
+      color: var(--accent-color);
+    }
+    
+    .contact-text p {
+      margin: 0;
+      color: var(--text-dark);
+    }
+    
+    /* Social Media */
+    .social-media h3 {
+      margin-bottom: 15px;
+      color: var(--accent-color);
+    }
+    
+    .social-icons {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    
+    .social-icon:hover {
+      transform: translateY(-3px);
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    /* Form styles */
+    .form-check {
+      display: flex;
+      align-items: flex-start;
+    }
+    
+    .form-check-input {
+      margin-right: 10px;
+      margin-top: 5px;
+    }
+    
+    .form-check-label {
+      font-size: 0.9rem;
+    }
+    
+    /* Map Section */
+    .map-section {
+      padding: 60px 0;
+      background-color: var(--background-light);
+    }
+    
+    .map-container {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* FAQ Section */
+    .faq-section {
+      padding: 60px 0;
+      background-color: white;
+    }
+    
+    .faq-accordion {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .faq-item {
+      margin-bottom: 15px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .faq-question {
+      background-color: var(--gray-light);
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .faq-question:hover {
+      background-color: var(--gray-medium);
+    }
+    
+    .faq-question.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .faq-question h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+    
+    .faq-question i {
+      transition: transform 0.3s;
+    }
+    
+    .faq-question.active i {
+      transform: rotate(180deg);
+    }
+    
+    .faq-answer {
+      padding: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background-color: white;
+    }
+    
+    .faq-answer.active {
+      padding: 20px;
+    }
+    
+    .faq-answer p {
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+    
+    .faq-answer ul {
+      padding-left: 20px;
+    }
+    
+    .faq-answer li {
+      margin-bottom: 5px;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+      padding: 60px 0;
+      background-color: var(--accent-color);
+      color: white;
+      text-align: center;
+    }
+    
+    .cta-content h2 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+    
+    .cta-content p {
+      max-width: 600px;
+      margin: 0 auto 30px;
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+    
+    .btn-lg {
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      background-color: white;
+      color: var(--accent-color);
+    }
+    
+    .btn-lg:hover {
+      background-color: var(--gray-light);
+      color: var(--accent-color);
+    }
+    
+    /* Alert styles */
+    .alert {
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 992px) {
+      .contact-wrapper {
+        flex-direction: column;
+      }
+      
+      .contact-info-card {
+        order: 2;
+      }
+      
+      .contact-form-card {
+        order: 1;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .social-icons {
+        justify-content: center;
+      }
+      
+      .contact-detail-item {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .contact-icon {
+        margin: 0 auto 10px;
+      }
+    }
+  </style>
+</body>
+</html>

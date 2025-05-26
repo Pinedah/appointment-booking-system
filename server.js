@@ -36,30 +36,42 @@ app.use('/api/auth', authRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/users', userRoutes); // Agregar esta línea
 
-// Rutas de vistas
+// Rutas para páginas HTML
 app.get('/', (req, res) => {
-  res.render('index');
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
 app.get('/login', (req, res) => {
-  res.render('login');
+  res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
 app.get('/register', (req, res) => {
-  res.render('register');
+  res.sendFile(path.join(__dirname, 'views', 'register.html'));
 });
 
-// Nuevas rutas
 app.get('/agendar-cita', (req, res) => {
-  res.render('agendar-cita');
+  res.sendFile(path.join(__dirname, 'views', 'agendar-cita.html'));
 });
 
 app.get('/mis-citas', (req, res) => {
-  res.render('mis-citas');
+  res.sendFile(path.join(__dirname, 'views', 'mis-citas.html'));
 });
 
 app.get('/perfil', (req, res) => {
-  res.render('perfil');
+  res.sendFile(path.join(__dirname, 'views', 'perfil.html'));
+});
+
+// Agregar nuevas rutas para las páginas adicionales
+app.get('/quienes-somos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'quienes-somos.html'));
+});
+
+app.get('/servicios', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'servicios.html'));
+});
+
+app.get('/contacto', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'contacto.html'));
 });
 
 // Sincronizar modelos con la base de datos

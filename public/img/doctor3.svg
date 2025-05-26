@@ -1,0 +1,30 @@
+<svg width="200" height="250" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Head -->
+  <circle cx="100" cy="60" r="40" fill="#FFDBAC" />
+  
+  <!-- Hair -->
+  <path d="M70 35 C70 15, 130 15, 130 35" fill="#333333" />
+  <path d="M65 60 C65 25, 135 25, 135 60" fill="#333333" />
+  
+  <!-- Facial Hair -->
+  <path d="M85 80 C90 90, 110 90, 115 80" stroke="#333333" stroke-width="4" fill="none" />
+  
+  <!-- Eyes -->
+  <circle cx="85" cy="55" r="5" fill="#333333" />
+  <circle cx="115" cy="55" r="5" fill="#333333" />
+  
+  <!-- Glasses -->
+  <circle cx="85" cy="55" r="12" stroke="#333333" stroke-width="2" fill="none" />
+  <circle cx="115" cy="55" r="12" stroke="#333333" stroke-width="2" fill="none" />
+  <path d="M97 55 L103 55" stroke="#333333" stroke-width="2" />
+  
+  <!-- Body -->
+  <rect x="60" y="100" width="80" height="120" fill="#1a2b58" />
+  
+  <!-- White Shirt -->
+  <rect x="70" y="100" width="60" height="40" fill="#FFFFFF" />
+  
+  <!-- Tie -->
+  <path d="M100 100 L100 150" stroke="#5b8bd3" stroke-width="10" />
+  <path d="M100 100 L90 115 L100 130 L110 115 Z" fill="#5b8bd3" />
+</svg>

@@ -1,0 +1,31 @@
+<svg width="200" height="250" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Head -->
+  <circle cx="100" cy="60" r="40" fill="#FFDBAC" />
+  
+  <!-- Hair -->
+  <path d="M70 35 C70 15, 130 15, 130 35" fill="#8B572A" />
+  <path d="M65 40 C65 25, 135 25, 135 40" fill="#8B572A" />
+  
+  <!-- Eyes -->
+  <circle cx="85" cy="55" r="5" fill="#333333" />
+  <circle cx="115" cy="55" r="5" fill="#333333" />
+  
+  <!-- Mouth -->
+  <path d="M90 75 C95 80, 105 80, 110 75" stroke="#333333" stroke-width="2" fill="none" />
+  
+  <!-- Nurse Cap -->
+  <path d="M65 30 L135 30 L135 40 L65 40 Z" fill="white" />
+  <path d="M80 30 L120 30 L120 15 L80 15 Z" fill="white" />
+  
+  <!-- Red Cross -->
+  <path d="M95 22.5 h10 m-5 -5 v10" stroke="red" stroke-width="2" />
+  
+  <!-- Body -->
+  <rect x="60" y="100" width="80" height="120" fill="#5b8bd3" />
+  
+  <!-- Collar -->
+  <path d="M60 100 L100 120 L140 100" fill="white" />
+  
+  <!-- Badge -->
+  <rect x="90" y="130" width="20" height="30" fill="white" />
+</svg>

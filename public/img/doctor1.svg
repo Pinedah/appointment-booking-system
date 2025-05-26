@@ -1,0 +1,28 @@
+<svg width="200" height="250" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Head -->
+  <circle cx="100" cy="60" r="40" fill="#FFDBAC" />
+  
+  <!-- Hair -->
+  <path d="M70 40 C70 20, 130 20, 130 40" fill="#333333" />
+  <path d="M65 60 C65 25, 135 25, 135 60" fill="#333333" />
+  
+  <!-- Eyes -->
+  <circle cx="85" cy="55" r="5" fill="#333333" />
+  <circle cx="115" cy="55" r="5" fill="#333333" />
+  
+  <!-- Mouth -->
+  <path d="M90 75 C95 80, 105 80, 110 75" stroke="#333333" stroke-width="2" fill="none" />
+  
+  <!-- Body -->
+  <rect x="60" y="100" width="80" height="120" fill="#5b8bd3" />
+  
+  <!-- Lab Coat -->
+  <rect x="55" y="100" width="90" height="130" fill="#FFFFFF" />
+  
+  <!-- Stethoscope -->
+  <circle cx="80" cy="130" r="5" stroke="#333333" stroke-width="2" fill="none" />
+  <path d="M80 135 C80 150, 100 150, 100 135" stroke="#333333" stroke-width="2" fill="none" />
+  
+  <!-- Face Mask -->
+  <path d="M85 70 C90 75, 110 75, 115 70" stroke="#5b8bd3" stroke-width="2" fill="none" />
+</svg>
